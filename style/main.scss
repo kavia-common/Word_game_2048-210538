@@ -21,14 +21,64 @@ $game-container-background: #bbada0;
 
 $transition-speed: 100ms;
 
+/**
+ * Theme variables
+ * We keep the rest of the original palette intact, and only override
+ * page-level/background/foreground plus some key containers.
+ */
+$theme-light-bg: #faf8ef;
+$theme-light-fg: $text-color;
+
+$theme-dark-bg: #121212;
+$theme-dark-fg: #e6e2dc;
+$theme-dark-panel: #1e1e1e;
+$theme-dark-border: rgba(255, 255, 255, 0.12);
+
+// Default (light) base styles
 html, body {
   margin: 0;
   padding: 0;
 
-  background: #faf8ef;
-  color: $text-color;
+  background: $theme-light-bg;
+  color: $theme-light-fg;
   font-family: "Clear Sans", "Helvetica Neue", Arial, sans-serif;
   font-size: 18px;
+}
+
+// Theme application is done by toggling a class on <html>
+html.theme-light, html.theme-light body {
+  background: $theme-light-bg;
+  color: $theme-light-fg;
+}
+
+html.theme-dark, html.theme-dark body {
+  background: $theme-dark-bg;
+  color: $theme-dark-fg;
+}
+
+// Ensure links remain readable in dark mode
+html.theme-dark a {
+  color: $theme-dark-fg;
+}
+
+// Minor tweaks to key surfaces for dark mode readability
+html.theme-dark hr {
+  border-bottom-color: $theme-dark-border;
+}
+
+html.theme-dark .score-container,
+html.theme-dark .best-container {
+  // Slightly darker score background while keeping original feel
+  background: darken($game-container-background, 10%);
+}
+
+html.theme-dark .game-container {
+  // Darker board background for contrast against page
+  background: darken($game-container-background, 15%);
+}
+
+html.theme-dark .grid-cell {
+  background: rgba(255, 255, 255, 0.08);
 }
 
 body {
@@ -461,11 +511,33 @@ hr {
   margin-bottom: 0;
 }
 
+// Group the theme toggle + restart on the right, while keeping the intro on the left
+.controls {
+  float: right;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+// Theme toggle button styled similarly to the existing button mixin
+.theme-toggle-button {
+  @include button;
+  border: 0;
+  cursor: pointer;
+  font: inherit;
+
+  // Help keyboard users see focus
+  &:focus {
+    outline: 2px solid rgba(143, 122, 102, 0.7);
+    outline-offset: 2px;
+  }
+}
+
 .restart-button {
   @include button;
   display: block;
   text-align: center;
-  float: right;
+  float: none; // handled by .controls flex layout
 }
 
 .game-explanation {
@@ -510,20 +582,30 @@ hr {
     margin-bottom: 10px;
   }
 
-  // Show intro and restart button side by side
+  // Stack intro and controls on small screens
   .game-intro {
-    width: 55%;
+    width: 100%;
     display: block;
     box-sizing: border-box;
     line-height: 1.65;
+    float: none;
+    margin-bottom: 8px;
   }
 
+  .controls {
+    float: none;
+    width: 100%;
+    display: flex;
+    gap: 8px;
+  }
+
+  .theme-toggle-button,
   .restart-button {
-    width: 42%;
+    width: 50%;
     padding: 0;
     display: block;
     box-sizing: border-box;
-    margin-top: 2px;
+    margin-top: 0;
   }
 
   // Render the game field at the right width
